@@ -242,7 +242,7 @@
     position: relative; 
   }
 
-  /* LOGO NỀN CHÌM HÒA TRỘN TƯƠNG ĐỐI CHO GITHUB */
+  /* LOGO NỀN CHÌM CHO PNG */
   main#content::before {
     content: "";
     position: fixed;
@@ -251,21 +251,15 @@
     transform: translate(-50%, -50%);
     width: 480px; 
     height: 480px;
-    /* Dùng đường dẫn tương đối để tương thích GitHub */
     background-image: url('logo.png'); 
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     opacity: 0.15; 
-    
-    /* Tẩy trắng nền ảnh JPEG để hòa trộn trong suốt tuyệt đối */
-    filter: contrast(1.4) brightness(1.1);
-    mix-blend-mode: multiply; 
     pointer-events: none; 
     z-index: 0;
   }
 
-  /* XÓA NỀN ĐỂ LỘ LOGO */
   .state-panel, .table-wrap, .doc-view-wrap {
     background: transparent !important; 
     backdrop-filter: none;
@@ -278,8 +272,7 @@
     margin:40px auto;
     text-align:center;
     padding:32px 24px;
-    border:1px dashed var(--stone-200); 
-    border-radius:var(--radius);
+    border: none; 
     position: relative;
     z-index: 1;
   }
@@ -400,6 +393,8 @@
     max-height:calc(100vh - 230px);
     position: relative;
     z-index: 1;
+    /* Kích hoạt Scroll mượt trên iOS */
+    -webkit-overflow-scrolling: touch; 
   }
   
   table#dataTable{
@@ -421,7 +416,7 @@
     border-bottom:1.5px solid var(--ink-900);
     font-weight:700;
     color:var(--ink-900);
-    z-index:1;
+    z-index:2;
   }
   table#dataTable thead th.hdr-wrap{
     white-space:normal;
@@ -467,7 +462,7 @@
   .doc-view-wrap {
     padding: 36px 40px; 
     border-radius: var(--radius);
-    border: none !important; /* XÓA VIỀN */
+    border: none !important; 
     max-height: calc(100vh - 180px);
     overflow-y: auto;
     font-size: 15.5px;
@@ -510,27 +505,19 @@
     margin-bottom: 6px;
   }
   
-  /* Đặt lề trái = 0 để ép tràn lề thẳng hàng với số 1-8 */
-  .doc-content {
-    padding-left: 0px; 
-  }
-
-  .doc-paragraph {
-    margin-bottom: 8px; 
-    text-align: justify;
-  }
+  .doc-content { padding-left: 0px; }
+  .doc-paragraph { margin-bottom: 8px; text-align: justify; }
   
-  /* Kỹ thuật Negative Text-Indent để gióng thẳng khối văn bản sau dấu Bullet */
   .doc-list {
-    padding-left: 18px; /* Thụt vào để tạo không gian cho bullet */
-    text-indent: -18px; /* Kéo dòng đầu tiên (chứa bullet) giật ngược ra ngoài 18px */
+    padding-left: 18px; 
+    text-indent: -18px; 
     margin-bottom: 8px;
     text-align: justify;
   }
   
   .doc-list .bullet {
     display: inline-block;
-    width: 18px; /* Cố định độ rộng để văn bản thẳng hàng tuyệt đối */
+    width: 18px; 
     color: var(--oxblood-700);
     font-weight: 700;
     text-indent: 0;
@@ -538,16 +525,14 @@
   }
   
   .doc-alpha { margin-top: 10px; font-weight: 600; color: var(--oxblood-800); }
-  
-  /* Chỉnh lại kiểu dáng Bullet cho phù hợp với yêu cầu */
   .doc-arrow { margin-top: 8px; color: var(--oxblood-800); }
-  .doc-arrow .bullet { font-size: 16px; font-weight: normal; } /* Mũi tên: ➢ */
+  .doc-arrow .bullet { font-size: 16px; font-weight: normal; } 
   
   .doc-dot { color: var(--ink-900); }
   .doc-dot .bullet {
-    font-size: 10px; /* Dấu chấm tròn nhỏ . */
+    font-size: 10px; 
     font-weight: bold;
-    transform: translateY(-2px); /* Tinh chỉnh độ cao cho dấu chấm */
+    transform: translateY(-2px); 
     color: var(--oxblood-800);
   }
 
@@ -682,7 +667,20 @@
 
   var cache = new Map();
   var currentTab = null;
+  
+  // Variables for Global State
   var currentRows = [];
+  var currentIsPhuLuc = false;
+  var currentSttFirst = false;
+
+  // ==== VIRTUAL SCROLLING VARIABLES ====
+  var virtualScrollData = [];
+  var vScrollContainer = null;
+  var vScrollTbody = null;
+  var ROW_HEIGHT_ESTIMATE = 42; // px - Ước lượng chiều cao trung bình mỗi dòng
+  var BUFFER_ROWS = 15; // Số dòng render dự phòng trên & dưới màn hình
+  var lastRenderedStart = -1; 
+  var isScrollListenerAttached = false;
 
   var els = {
     content: document.getElementById("content"),
@@ -756,7 +754,7 @@
         try{
           resolve(buildGrid(json.table));
         }catch(e){
-          reject(new Error("Không xử lý được dữ liệu trả về."));
+          reject(new Error("Không xử lý được dữ liệu trả về. Lỗi bộ nhớ."));
         }
       };
 
@@ -768,8 +766,8 @@
 
       timeoutId = setTimeout(function(){
         cleanup();
-        reject(new Error("Hết thời gian chờ phản hồi từ Google Trang tính."));
-      }, 15000);
+        reject(new Error("Hết thời gian chờ phản hồi từ Google Trang tính (Dữ liệu quá lớn)."));
+      }, 45000); 
 
       document.head.appendChild(script);
     });
@@ -777,55 +775,77 @@
 
   function buildGrid(table){
     if(!table || !table.cols) return { headers: [], rows: [] };
+    
     var nCols = table.cols.length;
-    var rows = (table.rows || []).map(function(r){
-      var cells = r.c || [];
-      var out = [];
-      for(var i = 0; i < nCols; i++){
-        var cell = cells[i];
-        if(!cell){ out.push(""); continue; }
-        var val = (cell.f !== undefined && cell.f !== null) ? cell.f : cell.v;
-        out.push(val === null || val === undefined ? "" : String(val));
-      }
-      return out;
-    });
-
-    var nonEmptyRows = rows.filter(function(r){
-      return r.some(function(v){ return v.trim() !== ""; });
-    });
-
+    var rawRows = table.rows || [];
+    var tempRows = [];
     var colHasData = new Array(nCols).fill(false);
-    nonEmptyRows.forEach(function(r){
-      r.forEach(function(v, i){
-        if(v.trim() !== "") colHasData[i] = true;
-      });
-    });
-    var keepIdx = [];
-    colHasData.forEach(function(v, i){ if(v) keepIdx.push(i); });
 
-    var trimmedRows = nonEmptyRows.map(function(r){
-      return keepIdx.map(function(i){ return r[i].trim(); });
-    });
+    for(var i = 0; i < rawRows.length; i++){
+      var cells = rawRows[i].c || [];
+      var rowData = new Array(nCols);
+      var isEmpty = true;
 
-    var headerRowIndex = -1;
-    var searchLimit = Math.min(6, trimmedRows.length);
-    for(var idx = 0; idx < searchLimit; idx++){
-      var hasStt = trimmedRows[idx].some(function(v){
-        var n = normalize(v);
-        return n === "stt";
-      });
-      if(hasStt){ headerRowIndex = idx; break; }
+      for(var j = 0; j < nCols; j++){
+        var cell = cells[j];
+        var val = "";
+        if (cell) {
+          val = (cell.f !== undefined && cell.f !== null) ? cell.f : cell.v;
+          val = (val === null || val === undefined) ? "" : String(val).trim();
+        }
+        rowData[j] = val;
+        if (val !== "") {
+          isEmpty = false;
+          colHasData[j] = true;
+        }
+      }
+      
+      if(!isEmpty) {
+        tempRows.push(rowData);
+      }
     }
 
-    var headers, finalRows;
+    table.rows = null; 
+    rawRows = null; 
+
+    var keepIdx = [];
+    for(var k = 0; k < nCols; k++){
+      if(colHasData[k]) keepIdx.push(k);
+    }
+
+    var headerRowIndex = -1;
+    var searchLimit = Math.min(6, tempRows.length);
+    for(var idx = 0; idx < searchLimit; idx++){
+      for(var c = 0; c < keepIdx.length; c++){
+        if (normalize(tempRows[idx][keepIdx[c]]) === "stt") {
+          headerRowIndex = idx;
+          break;
+        }
+      }
+      if(headerRowIndex !== -1) break;
+    }
+
+    var headers = [];
+    var startIdx = headerRowIndex !== -1 ? headerRowIndex + 1 : 0;
+
     if(headerRowIndex !== -1){
-      headers = trimmedRows[headerRowIndex].map(function(h, i){
-        return h !== "" ? h : colLetter(keepIdx[i]);
-      });
-      finalRows = trimmedRows.slice(headerRowIndex + 1);
+      for(var h = 0; h < keepIdx.length; h++){
+        var headVal = tempRows[headerRowIndex][keepIdx[h]];
+        headers.push(headVal !== "" ? headVal : colLetter(keepIdx[h]));
+      }
     } else {
-      headers = keepIdx.map(function(i){ return colLetter(i); });
-      finalRows = trimmedRows;
+      for(var h = 0; h < keepIdx.length; h++){
+        headers.push(colLetter(keepIdx[h]));
+      }
+    }
+
+    var finalRows = new Array(tempRows.length - startIdx);
+    for(var r = startIdx; r < tempRows.length; r++){
+      var newRow = new Array(keepIdx.length);
+      for(var c = 0; c < keepIdx.length; c++){
+        newRow[c] = tempRows[r][keepIdx[c]];
+      }
+      finalRows[r - startIdx] = newRow;
     }
 
     return { headers: headers, rows: finalRows };
@@ -915,6 +935,97 @@
     });
   }
 
+
+  // ==========================================
+  // LÕI VIRTUAL SCROLLING (CHỐNG LAG TUYỆT ĐỐI)
+  // ==========================================
+  function buildRowsHTML(rowsData, isPhuLuc, sttFirst) {
+    return rowsData.map(function(r){
+      if(isPhuLuc) {
+        if(r.length === 0) return "";
+        var html = '<tr><td colspan="2" style="font-weight: bold; text-align: center;">' + escapeHtml(r[0]) + '</td>';
+        for(var i = 1; i < r.length; i++){
+          html += '<td>' + escapeHtml(r[i]) + '</td>';
+        }
+        html += '</tr>';
+        return html;
+      } else {
+        return "<tr>" + r.map(function(c, i){
+          var cls = (!isPhuLuc && sttFirst && i === 0) ? ' class="col-stt"' : "";
+          return "<td" + cls + ">" + escapeHtml(c) + "</td>";
+        }).join("") + "</tr>";
+      }
+    }).join("");
+  }
+
+  function performVirtualScrollRender() {
+    if (!vScrollContainer || !vScrollTbody) return;
+    
+    var scrollTop = vScrollContainer.scrollTop;
+    var viewportHeight = vScrollContainer.clientHeight;
+    var totalRows = virtualScrollData.length;
+    
+    // Tính toán Index của dòng cần vẽ
+    var startIndex = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT_ESTIMATE) - BUFFER_ROWS);
+    var endIndex = Math.min(totalRows, Math.floor((scrollTop + viewportHeight) / ROW_HEIGHT_ESTIMATE) + BUFFER_ROWS);
+    
+    // Nếu vẫn ở trong khối dữ liệu đã vẽ thì bỏ qua để tiết kiệm tài nguyên
+    if (startIndex === lastRenderedStart) return;
+    lastRenderedStart = startIndex;
+
+    // Tính toán chiều cao không gian giả (Khoảng trống)
+    var topSpacerHeight = startIndex * ROW_HEIGHT_ESTIMATE;
+    var bottomSpacerHeight = Math.max(0, (totalRows - endIndex) * ROW_HEIGHT_ESTIMATE);
+
+    var html = '';
+    // Thẻ TR tạo khoảng trống phía trên
+    if (topSpacerHeight > 0) {
+      html += '<tr style="height:' + topSpacerHeight + 'px; border:none; pointer-events:none;"><td colspan="100" style="padding:0; border:none;"></td></tr>';
+    }
+    
+    // Gắn dữ liệu thật vào giữa
+    var chunk = virtualScrollData.slice(startIndex, endIndex);
+    html += buildRowsHTML(chunk, currentIsPhuLuc, currentSttFirst);
+    
+    // Thẻ TR tạo khoảng trống phía dưới
+    if (bottomSpacerHeight > 0) {
+      html += '<tr style="height:' + bottomSpacerHeight + 'px; border:none; pointer-events:none;"><td colspan="100" style="padding:0; border:none;"></td></tr>';
+    }
+    
+    // In ra màn hình ngay lập tức (Chỉ khoảng 30-50 thẻ TR)
+    vScrollTbody.innerHTML = html;
+  }
+
+  function handleScrollEvent() {
+    window.requestAnimationFrame(performVirtualScrollRender);
+  }
+
+  function onTableSearch(value){
+    var term = normalize(value);
+    
+    // Lọc cực nhanh trong RAM
+    if (term === "") {
+        virtualScrollData = currentRows;
+    } else {
+        virtualScrollData = currentRows.filter(function(r) {
+            var rowText = normalize(r.join(" "));
+            return rowText.indexOf(term) !== -1;
+        });
+    }
+
+    var noResults = document.getElementById("noResults");
+    if(noResults) noResults.hidden = virtualScrollData.length > 0;
+
+    // Reset lại vị trí cuộn & bắt buộc Render lại
+    if (vScrollContainer) {
+      vScrollContainer.scrollTop = 0; 
+    }
+    lastRenderedStart = -1; 
+    performVirtualScrollRender();
+  }
+  // ==========================================
+
+
   function renderTable(name, data){
     currentRows = data.rows;
 
@@ -960,13 +1071,8 @@
           if (body) {
             var safeBody = escapeHtml(body);
             
-            // 1. Dấu a) b)
             safeBody = safeBody.replace(/(?:\s|^)([a-z]\))\s/gi, '</div><div class="doc-list doc-alpha"><span class="bullet">$1</span>');
-            
-            // 2. Thay thế "- Tiêu đề:" thành "➢ Tiêu đề:" (kèm thẻ <b> in đậm)
             safeBody = safeBody.replace(/(?:\s|^)-\s*([^:.]{1,60})\s*:/g, '</div><div class="doc-list doc-arrow"><span class="bullet">➢</span><b>$1:</b> ');
-            
-            // 3. THAY THẾ các dấu '+' và '-' thành dấu chấm tròn (.)
             safeBody = safeBody.replace(/(?:\s|^)[+-]\s/g, '</div><div class="doc-list doc-dot"><span class="bullet">●</span>');
             
             safeBody = '<div class="doc-paragraph">' + safeBody + '</div>';
@@ -1003,6 +1109,9 @@
     }
 
     var sttFirst = !isPhuLuc && effectiveHeaders && effectiveHeaders.length > 0 && normalize(effectiveHeaders[0]) === "stt";
+    
+    currentIsPhuLuc = isPhuLuc;
+    currentSttFirst = sttFirst;
 
     var theadHtml;
     if(isPhuLuc){
@@ -1014,24 +1123,6 @@
       }).join("");
       theadHtml = '<tr>' + headHtml + '</tr>';
     }
-
-    var bodyHtml = data.rows.map(function(r){
-      if(isPhuLuc) {
-        if(r.length === 0) return "";
-        var html = '<tr>';
-        html += '<td colspan="2" style="font-weight: bold; text-align: center;">' + escapeHtml(r[0]) + '</td>';
-        for(var i = 1; i < r.length; i++){
-          html += '<td>' + escapeHtml(r[i]) + '</td>';
-        }
-        html += '</tr>';
-        return html;
-      } else {
-        return "<tr>" + r.map(function(c, i){
-          var cls = (!isPhuLuc && sttFirst && i === 0) ? ' class="col-stt"' : "";
-          return "<td" + cls + ">" + escapeHtml(c) + "</td>";
-        }).join("") + "</tr>";
-      }
-    }).join("");
 
     var colCount = isPhuLuc ? (data.rows[0] ? data.rows[0].length : 17) : effectiveHeaders.length;
     var tableClass = isPhuLuc ? 'summary-table' : 'standard-table';
@@ -1051,33 +1142,36 @@
           '<a class="ext-link" href="' + SHEET_URL + '" target="_blank" rel="noopener">Mở trên Google Sheets ↗</a>' +
         '</div>' +
       '</div>' +
-      '<div class="table-wrap">' +
+      '<div class="table-wrap" id="vScrollWrapper">' +
         '<table id="dataTable" class="' + tableClass + '">' +
           '<thead>' + theadHtml + '</thead>' +
-          '<tbody>' + bodyHtml + '</tbody>' +
+          '<tbody id="tableBody"></tbody>' + 
         '</table>' +
         '<p class="no-results" id="noResults" hidden>Không tìm thấy kết quả phù hợp.</p>' +
       '</div>';
 
+    // Bật tìm kiếm
     document.getElementById("tableSearch").addEventListener("input", function(e){
       onTableSearch(e.target.value);
     });
-  }
 
-  function onTableSearch(value){
-    var term = normalize(value);
-    var tbody = document.querySelector("#dataTable tbody");
-    if(!tbody) return;
-    var rows = tbody.querySelectorAll("tr");
-    var visible = 0;
-    rows.forEach(function(tr, i){
-      var rowText = normalize(currentRows[i].join(" "));
-      var match = term === "" || rowText.indexOf(term) !== -1;
-      tr.style.display = match ? "" : "none";
-      if(match) visible++;
-    });
-    var noResults = document.getElementById("noResults");
-    if(noResults) noResults.hidden = visible !== 0 || term === "";
+    // Kích hoạt Virtual Scroll
+    virtualScrollData = currentRows;
+    vScrollContainer = document.getElementById("vScrollWrapper");
+    vScrollTbody = document.getElementById("tableBody");
+    lastRenderedStart = -1;
+
+    // Gắn sự kiện cuộn (Scroll)
+    if (!isScrollListenerAttached) {
+      // Dùng Event Delegation / Re-attach 
+      vScrollContainer.addEventListener("scroll", handleScrollEvent);
+    } else {
+      vScrollContainer.removeEventListener("scroll", handleScrollEvent);
+      vScrollContainer.addEventListener("scroll", handleScrollEvent);
+    }
+    
+    // Gọi Render lần đầu tiên
+    performVirtualScrollRender();
   }
 
   function selectTab(name){
