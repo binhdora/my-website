@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danh Sách Liệt Sĩ Các Tỉnh — Tra cứu trực tuyến</title>
+<meta name="description" content="Tra cứu trực tiếp toàn bộ dữ liệu từ Google Trang tính, không cần đăng nhập, không cần cài ứng dụng.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --stone-50:#F4F0E4;
+    --stone-100:#EAE2CD;
+    --stone-200:#DBCFAE;
+    --ink-900:#241F17;
+    --ink-700:#4A4030;
+    --ink-500:#6B6047;
+    --oxblood-700:#7A1F1D;
+    --oxblood-800:#5C1614;
+    --oxblood-900:#3E0F0D;
+    --gold-300:#DCC079;
+    --gold-500:#B4903F;
+    --gold-600:#9A7A31;
+    --line:rgba(36,31,23,.14);
+    --shadow-sm:0 1px 2px rgba(36,31,23,.10);
+    --shadow-md:0 8px 24px rgba(36,31,23,.16);
+    --radius:8px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:'Be Vietnam Pro',system-ui,sans-serif;
+    background:var(--stone-50);
+    color:var(--ink-900);
+    display:flex;
+    flex-direction:column;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  a{color:inherit;}
+  button{font-family:inherit;}
+
+  /* ---------- Hiệu ứng Animations ---------- */
+  @keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .state-panel, .panel-header, .table-wrap, .doc-view-wrap {
+    animation: fadeInUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  /* ---------- Header ---------- */
+  header.app-header{
+    background:linear-gradient(135deg,var(--oxblood-800),var(--oxblood-900));
+    border-bottom:3px solid var(--gold-500);
+    color:var(--stone-50);
+    padding:16px 24px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    flex-shrink:0;
+    position: relative;
+    z-index: 10;
+  }
+  .brand-star{
+    width:34px;height:34px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--gold-300);
+    border-radius:50%;
+    color:var(--gold-300);
+  }
+  .brand-star svg{width:18px;height:18px;fill:currentColor;}
+  .brand-text{flex:1; min-width:0;}
+  .brand-text h1{
+    font-family:'Noto Serif',serif;
+    font-size:19px;
+    font-weight:700;
+    letter-spacing:.02em;
+    margin:0 0 2px 0;
+    text-shadow:0 1px 0 rgba(0,0,0,.25);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .brand-text p{
+    margin:0;
+    font-size:12px;
+    color:var(--gold-300);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .header-link{
+    font-size:13px;
+    white-space:nowrap;
+    border:1px solid rgba(220,192,121,.5);
+    padding:8px 14px;
+    border-radius:999px;
+    text-decoration:none;
+    transition: all .2s ease;
+    flex-shrink:0;
+  }
+  .header-link:hover{background:rgba(220,192,121,.12);}
+  .header-link:active{transform:scale(0.96);}
+  #menuBtn{
+    display:none;
+    background:transparent;
+    border:1px solid rgba(220,192,121,.5);
+    color:var(--stone-50);
+    border-radius:6px;
+    padding:8px 10px;
+    cursor:pointer;
+    transition: background .2s ease;
+  }
+  #menuBtn:active{transform:scale(0.92);}
+  #menuBtn svg{width:18px;height:18px;fill:currentColor;display:block;}
+
+  /* ---------- Layout ---------- */
+  .layout{
+    flex:1;
+    display:flex;
+    min-height:0;
+  }
+
+  /* ---------- Sidebar ---------- */
+  aside#sidebar{
+    width:300px;
+    flex-shrink:0;
+    background:var(--stone-100);
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    position: relative;
+    z-index: 10;
+  }
+  .sidebar-search{
+    padding:16px;
+    border-bottom:1px solid var(--line);
+    flex-shrink:0;
+  }
+  .search-field{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .search-field svg{
+    position:absolute;
+    left:10px;
+    width:15px;height:15px;
+    fill:var(--ink-500);
+    pointer-events:none;
+  }
+  .search-field input{
+    width:100%;
+    padding:9px 10px 9px 32px;
+    border:1px solid var(--stone-200);
+    border-radius:6px;
+    background:#fff;
+    font-size:14px;
+    color:var(--ink-900);
+    transition: outline 0.2s ease, border-color 0.2s ease;
+  }
+  .search-field input:focus-visible{
+    outline:2px solid var(--gold-500);
+    outline-offset:1px;
+  }
+  .sidebar-scroll{
+    flex:1;
+    overflow-y:auto;
+    padding:8px 12px 16px;
+  }
+  .sidebar-group-label{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--gold-600);
+    padding:14px 8px 6px;
+  }
+  ul.tab-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+  .tab-btn{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:9px 10px;
+    border-radius:6px;
+    border:1px solid transparent;
+    background:transparent;
+    color:var(--ink-700);
+    font-size:14px;
+    cursor:pointer;
+    margin-bottom:2px;
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .tab-btn:hover{background:var(--stone-200);}
+  .tab-btn:active{transform: scale(0.97);}
+  .tab-btn:focus-visible{outline:2px solid var(--gold-500); outline-offset:-2px;}
+  .tab-btn.active{
+    background:var(--oxblood-700);
+    color:#fff;
+    box-shadow:inset 3px 0 0 var(--gold-300);
+    transform: scale(1);
+  }
+  li.empty{
+    padding:10px;
+    font-size:13px;
+    color:var(--ink-500);
+    font-style:italic;
+  }
+  .sidebar-footer{
+    padding:12px 16px;
+    border-top:1px solid var(--line);
+    font-size:11.5px;
+    color:var(--ink-500);
+    flex-shrink:0;
+    line-height:1.5;
+  }
+
+  #backdrop{
+    display:none;
+    position:fixed; inset:0;
+    background:rgba(36,31,23,.45);
+    z-index:20;
+    transition: opacity 0.3s ease;
+  }
+  #backdrop.show{display:block;}
+
+  /* ---------- Main content & WATERMARK ---------- */
+  main#content{
+    flex:1;
+    min-width:0;
+    min-height:0;
+    overflow-y:auto;
+    padding:28px 32px;
+    position: relative; 
+  }
+
+  /* LOGO NỀN CHÌM HÒA TRỘN TƯƠNG ĐỐI CHO GITHUB */
+  main#content::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: calc(50% + 150px); 
+    transform: translate(-50%, -50%);
+    width: 480px; 
+    height: 480px;
+    /* Dùng đường dẫn tương đối để tương thích GitHub */
+    background-image: url('logo.png'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.15; 
+    
+    /* Tẩy trắng nền ảnh JPEG để hòa trộn trong suốt tuyệt đối */
+    filter: contrast(1.4) brightness(1.1);
+    mix-blend-mode: multiply; 
+    pointer-events: none; 
+    z-index: 0;
+  }
+
+  /* XÓA NỀN ĐỂ LỘ LOGO */
+  .state-panel, .table-wrap, .doc-view-wrap {
+    background: transparent !important; 
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none; 
+  }
+
+  .state-panel{
+    max-width:560px;
+    margin:40px auto;
+    text-align:center;
+    padding:32px 24px;
+    border:1px dashed var(--stone-200); 
+    border-radius:var(--radius);
+    position: relative;
+    z-index: 1;
+  }
+  .state-panel h2{
+    font-family:'Noto Serif',serif;
+    font-size:20px;
+    margin:8px 0 8px;
+  }
+  .state-panel p{color:var(--ink-700); line-height:1.6; font-size:14.5px;}
+  
+  .landing-stats{
+    display:flex;
+    justify-content:center;
+    gap:36px;
+    margin-top:20px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+  }
+  .landing-stats div{display:flex; flex-direction:column; align-items:center;}
+  .landing-stats strong{font-family:'Noto Serif',serif; font-size:26px; color:var(--oxblood-700);}
+  .landing-stats span{font-size:12px; color:var(--ink-500); text-transform:uppercase; letter-spacing:.06em; margin-top:2px;}
+
+  .state-panel.error h2{color:var(--oxblood-700);}
+  .state-panel ul{text-align:left; font-size:13.5px; color:var(--ink-700); line-height:1.7; margin:12px 0;}
+  .state-actions{display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap;}
+  .state-actions button, .state-actions a{
+    padding:9px 16px;
+    border-radius:6px;
+    font-size:13.5px;
+    cursor:pointer;
+    text-decoration:none;
+    transition: all 0.2s ease;
+  }
+  .state-actions button{
+    background:var(--oxblood-700);
+    color:#fff;
+    border:none;
+  }
+  .state-actions a{
+    border:1px solid var(--stone-200);
+    background:transparent;
+    color:var(--ink-900);
+  }
+  .state-actions button:active, .state-actions a:active {
+    transform: scale(0.96);
+  }
+
+  .spinner{
+    width:26px;height:26px;
+    border:3px solid var(--stone-200);
+    border-top-color:var(--oxblood-700);
+    border-radius:50%;
+    margin:0 auto 14px;
+    animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- Data panel ---------- */
+  .panel-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:16px;
+    margin-bottom:16px;
+    padding-bottom:16px;
+    border-bottom:2px solid var(--gold-500);
+    position: relative;
+    z-index: 1;
+  }
+  .panel-header h2{
+    font-family:'Noto Serif',serif;
+    font-size:24px;
+    margin:0 0 4px;
+    color:var(--oxblood-800);
+  }
+  .panel-header .meta{
+    margin:0;
+    font-size:13px;
+    color:var(--ink-500);
+  }
+  .panel-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .table-search{position:relative; display:flex; align-items:center;}
+  .table-search svg{position:absolute; left:10px; width:15px; height:15px; fill:var(--ink-500); pointer-events:none;}
+  .table-search input{
+    padding:9px 10px 9px 32px;
+    border:1px solid var(--stone-200);
+    border-radius:6px;
+    font-size:14px;
+    width:220px;
+    background:transparent; 
+    transition: all 0.2s ease;
+  }
+  .table-search input:focus-visible{outline:2px solid var(--gold-500); outline-offset:1px;}
+  .ext-link{
+    font-size:13px;
+    color:var(--oxblood-700);
+    text-decoration:none;
+    border:1px solid var(--stone-200);
+    background:transparent; 
+    padding:9px 14px;
+    border-radius:6px;
+    white-space:nowrap;
+    transition: all 0.2s ease;
+  }
+  .ext-link:hover{border-color:var(--oxblood-700); background-color: rgba(122, 31, 29, 0.04);}
+  .ext-link:active{transform: scale(0.96);}
+
+  .table-wrap{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:auto;
+    max-height:calc(100vh - 230px);
+    position: relative;
+    z-index: 1;
+  }
+  
+  table#dataTable{
+    border-collapse:collapse;
+    width:100%;
+    font-size:13.5px;
+    border: 1px solid var(--stone-200);
+  }
+  table#dataTable th, table#dataTable td {
+    border: 1px solid var(--line); 
+  }
+  table#dataTable thead th{
+    position:sticky;
+    top:0;
+    background:rgba(219, 207, 174, 0.96); 
+    backdrop-filter: blur(4px);
+    text-align:center;
+    padding:10px 14px;
+    border-bottom:1.5px solid var(--ink-900);
+    font-weight:700;
+    color:var(--ink-900);
+    z-index:1;
+  }
+  table#dataTable thead th.hdr-wrap{
+    white-space:normal;
+    vertical-align:middle;
+    line-height:1.35;
+  }
+  table#dataTable thead tr:not(:last-child) th{
+    top:0;
+  }
+  
+  table#dataTable tbody td{
+    padding:8px 12px;
+    vertical-align: middle; 
+    color:var(--ink-900);
+  }
+  
+  table#dataTable tbody tr {
+    transition: background-color 0.15s ease-out;
+  }
+  table#dataTable tbody tr:nth-child(even){background:rgba(36,31,23,.03);} 
+  table#dataTable tbody tr:hover{background:rgba(180,144,63,.12);}
+  
+  table.standard-table { table-layout: auto; }
+  table.standard-table th:nth-child(1), table.standard-table td:nth-child(1) { width: 40px; min-width: 40px; text-align: center; }
+  table.standard-table th:nth-child(2), table.standard-table td:nth-child(2) { white-space: nowrap; min-width: 130px; font-weight: 500; text-align: left; }
+  table.standard-table th:nth-child(3), table.standard-table td:nth-child(3) { white-space: normal; width: 75px; min-width: 75px; line-height: 1.3; text-align: center; }
+  table.standard-table th:nth-child(4), table.standard-table td:nth-child(4) { min-width: 220px; text-align: left; }
+  table.standard-table th:nth-child(5), table.standard-table td:nth-child(5) { width: 80px; min-width: 80px; text-align: center; }
+  table.standard-table th:nth-child(6), table.standard-table td:nth-child(6) { width: 70px; min-width: 70px; text-align: center; }
+  table.standard-table th:nth-child(7), table.standard-table td:nth-child(7) { width: 60px; min-width: 60px; text-align: center; }
+  table.standard-table th:nth-child(8), table.standard-table td:nth-child(8) { width: 70px; min-width: 70px; text-align: center; }
+  table.standard-table th:nth-child(9), table.standard-table td:nth-child(9) { white-space: normal; width: 85px; min-width: 85px; line-height: 1.3; text-align: center; }
+  table.standard-table th:nth-child(10), table.standard-table td:nth-child(10) { min-width: 220px; text-align: left; }
+  
+  table.summary-table { border: 1.5px solid #111; }
+  table.summary-table th, table.summary-table td { border: 1px solid #111; }
+  table.summary-table thead th { text-align: center; vertical-align: middle; padding: 12px 8px; background-color: rgba(219, 207, 174, 0.96); font-weight: 700; color: #111; }
+  table.summary-table tbody td { text-align: center; vertical-align: middle; padding: 10px 8px; color: #111; }
+
+  /* ========================================================
+     UI CHUYÊN BIỆT CHO TRANG THUYẾT MINH
+     ======================================================== */
+  .doc-view-wrap {
+    padding: 36px 40px; 
+    border-radius: var(--radius);
+    border: none !important; /* XÓA VIỀN */
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+    font-size: 15.5px;
+    line-height: 1.7; 
+    color: var(--ink-900);
+    position: relative;
+    z-index: 1;
+  }
+  .doc-view-wrap .doc-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--oxblood-800);
+    text-align: center;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  
+  .doc-divider {
+    border: 0;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, var(--gold-500), transparent);
+    margin: 16px auto 28px auto;
+    width: 65%;
+  }
+
+  .doc-view-wrap .doc-subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: var(--ink-500);
+    margin-bottom: 32px;
+    font-style: italic;
+  }
+  
+  .doc-heading {
+    font-size: 17.5px;
+    font-weight: 700;
+    color: var(--oxblood-700);
+    margin-top: 22px; 
+    margin-bottom: 6px;
+  }
+  
+  /* Đặt lề trái = 0 để ép tràn lề thẳng hàng với số 1-8 */
+  .doc-content {
+    padding-left: 0px; 
+  }
+
+  .doc-paragraph {
+    margin-bottom: 8px; 
+    text-align: justify;
+  }
+  
+  /* Kỹ thuật Negative Text-Indent để gióng thẳng khối văn bản sau dấu Bullet */
+  .doc-list {
+    padding-left: 18px; /* Thụt vào để tạo không gian cho bullet */
+    text-indent: -18px; /* Kéo dòng đầu tiên (chứa bullet) giật ngược ra ngoài 18px */
+    margin-bottom: 8px;
+    text-align: justify;
+  }
+  
+  .doc-list .bullet {
+    display: inline-block;
+    width: 18px; /* Cố định độ rộng để văn bản thẳng hàng tuyệt đối */
+    color: var(--oxblood-700);
+    font-weight: 700;
+    text-indent: 0;
+    text-align: left;
+  }
+  
+  .doc-alpha { margin-top: 10px; font-weight: 600; color: var(--oxblood-800); }
+  
+  /* Chỉnh lại kiểu dáng Bullet cho phù hợp với yêu cầu */
+  .doc-arrow { margin-top: 8px; color: var(--oxblood-800); }
+  .doc-arrow .bullet { font-size: 16px; font-weight: normal; } /* Mũi tên: ➢ */
+  
+  .doc-dot { color: var(--ink-900); }
+  .doc-dot .bullet {
+    font-size: 10px; /* Dấu chấm tròn nhỏ . */
+    font-weight: bold;
+    transform: translateY(-2px); /* Tinh chỉnh độ cao cho dấu chấm */
+    color: var(--oxblood-800);
+  }
+
+  .no-results{
+    padding:24px;
+    text-align:center;
+    color:var(--ink-500);
+    font-size:14px;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px){
+    #menuBtn{display:inline-flex; align-items:center;}
+    aside#sidebar{
+      position:fixed;
+      top:0; bottom:0; left:0;
+      width:82%;
+      max-width:320px;
+      z-index:30;
+      transform:translateX(-100%);
+      transition:transform .3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow:var(--shadow-md);
+    }
+    aside#sidebar.open{transform:translateX(0);}
+    main#content{padding:18px;}
+    main#content::before { left: 50%; width: 320px; height: 320px; }
+    .panel-header{align-items:stretch;}
+    .table-search input{width:100%;}
+    .panel-actions{width:100%; justify-content:space-between;}
+    .doc-view-wrap { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <button id="menuBtn" aria-label="Mở danh sách tỉnh">
+    <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+  </button>
+  <div class="brand-star">
+    <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6L22 9.3l-5.2 4.8L18.2 21 12 17.3 5.8 21l1.4-6.9L2 9.3l7.1-.7z"/></svg>
+  </div>
+  <div class="brand-text">
+    <h1>Danh Sách Liệt Sĩ Các Tỉnh</h1>
+    <p>Cơ sở dữ liệu tra cứu trực tuyến</p>
+  </div>
+  <a class="header-link" id="headerSheetLink" href="#" target="_blank" rel="noopener">Mở bảng gốc ↗</a>
+</header>
+
+<div id="backdrop"></div>
+
+<div class="layout">
+  <aside id="sidebar">
+    <div class="sidebar-search">
+      <div class="search-field">
+        <svg viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <input id="sidebarSearch" type="text" placeholder="Tìm tỉnh / thành, tài liệu…" autocomplete="off">
+      </div>
+    </div>
+    <div class="sidebar-scroll">
+      <div class="sidebar-group-label">Tài liệu</div>
+      <ul class="tab-list" id="docTabList"></ul>
+      <div class="sidebar-group-label">Danh sách theo tỉnh / thành (<span id="provCount"></span>)</div>
+      <ul class="tab-list" id="provTabList"></ul>
+    </div>
+    <div class="sidebar-footer">
+      Dữ liệu được tải trực tiếp từ Google Trang tính công khai — không cần đăng nhập, không cần cài ứng dụng. Mỗi lượt chọn sẽ tải dữ liệu mới nhất.
+    </div>
+  </aside>
+
+  <main id="content"></main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var SHEET_ID = "11ebRdxujtBHw61GZRXFjkE0A-IzzUPjwcEqEMeCN6C4";
+  var SHEET_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/edit?usp=sharing";
+
+  var DOC_TABS = ["THUYẾT MINH", "Số liệu Tổng quan", "Danh sách Liệt Sĩ SƯ ĐOÀN"];
+
+  var PROVINCE_TABS = [
+    "An Giang","Bà Rịa","Bắc Giang","Bạc Liêu","Bắc Ninh","Bắc Thái","Bến Tre","Biên Hòa",
+    "Bình Định","Bình Dương","Bình Thuận","Bình Trị Thiên","Cà Mau","Cần Thơ","Cao Bằng",
+    "Cửu Long","Đà Nẵng","Đồng Nai","Đồng Tháp","Hà Bắc","Hà Giang","Hà Nam Ninh","Hà Nội",
+    "Hà Sơn Bình","Hà Tây","Hà Tĩnh","Hải Dương","Hải Hưng","Hải Phòng","Hậu Giang","Hòa Bình",
+    "Hưng Yên","Kiên Giang","Lai Châu","Lạng Sơn","Lào Cai","Long An","Long Khánh","Minh Hải",
+    "Móng Cái","Mỹ Tho","Nam Định","Nam Hà","Nghệ An","Nghệ Tĩnh","Nghĩa Bình","Nghĩa Lộ",
+    "Nha Trang","Ninh Bình","Phú Khánh","Phú Thọ","Phú Yên","Quảng Bình","Quảng Nam","Quảng Ngãi",
+    "Quảng Ninh","Quảng Trị","Rạch Giá","Sóc Trăng","Sơn La","Sông Bé","Tây Ninh","Thái Bình",
+    "Thái Nguyên","Thanh Hóa","Thừa Thiên","Thừa Thiên Huế","Thuận Hải","Tiền Giang","Tp. HCM",
+    "Trà Vinh","Tuyên Quang","Vĩnh Long","Vĩnh Phú","Vĩnh Phúc","Yên Bái"
+  ];
+
+  var SIMPLE_HEADER = [
+    "STT","Họ và tên","Ngày, tháng, năm sinh","Quê quán","Nhập ngũ","Cấp bậc","Chức vụ",
+    "Đơn vị","Ngày, tháng, năm hy sinh (Trường hợp)","Nơi hy sinh","Nơi mai táng","Họ tên cha, mẹ, vợ"
+  ];
+
+  var PHU_LUC_HEADER_HTML =
+    '<tr>' +
+      '<th rowspan="3" class="col-stt">TT</th>' +
+      '<th rowspan="3">ĐƠN VỊ</th>' +
+      '<th rowspan="3">Tổng số liệt sĩ</th>' +
+      '<th colspan="6" class="hdr-wrap">Kết quả rà soát</th>' +
+      '<th colspan="4" class="hdr-wrap">Phân tích theo thời kỳ</th>' +
+      '<th colspan="4" class="hdr-wrap">Thông tin mộ</th>' +
+    '</tr>' +
+    '<tr>' +
+      '<th rowspan="2" class="hdr-wrap">Có hồ sơ, danh sách</th>' +
+      '<th rowspan="2" class="hdr-wrap">Đã nhập vào CSDL</th>' +
+      '<th rowspan="2" class="hdr-wrap">Chưa có danh sách</th>' +
+      '<th colspan="2" class="hdr-wrap">Đã phân tích, chuyển giao</th>' +
+      '<th rowspan="2" class="hdr-wrap">Đã xác minh kết luận</th>' +
+      '<th rowspan="2" class="hdr-wrap">Chống Pháp</th>' +
+      '<th rowspan="2" class="hdr-wrap">Chống Mỹ</th>' +
+      '<th rowspan="2" class="hdr-wrap">Bảo vệ Biên giới Tây Nam (Campuchia)</th>' +
+      '<th rowspan="2" class="hdr-wrap">Trong thực hiện nhiệm vụ DT năm 2024</th>' +
+      '<th rowspan="2" class="hdr-wrap">Mộ đủ thông tin</th>' +
+      '<th rowspan="2" class="hdr-wrap">Thiếu thông tin</th>' +
+      '<th rowspan="2" class="hdr-wrap">Chưa qui tập</th>' +
+      '<th rowspan="2" class="hdr-wrap">Mất thi hài (không rõ)</th>' +
+    '</tr>' +
+    '<tr>' +
+      '<th class="hdr-wrap">Theo quê quán</th>' +
+      '<th class="hdr-wrap">Theo nơi hy sinh chôn cất ban đầu</th>' +
+    '</tr>';
+
+  var PHU_LUC_TAB_NAME = "Số liệu Tổng quan";
+  var SU_DOAN_TAB_NAME = "Danh sách Liệt Sĩ SƯ ĐOÀN";
+
+  var cache = new Map();
+  var currentTab = null;
+  var currentRows = [];
+
+  var els = {
+    content: document.getElementById("content"),
+    sidebar: document.getElementById("sidebar"),
+    backdrop: document.getElementById("backdrop"),
+    menuBtn: document.getElementById("menuBtn"),
+    sidebarSearch: document.getElementById("sidebarSearch"),
+    docTabList: document.getElementById("docTabList"),
+    provTabList: document.getElementById("provTabList"),
+    provCount: document.getElementById("provCount"),
+    headerSheetLink: document.getElementById("headerSheetLink")
+  };
+
+  els.headerSheetLink.href = SHEET_URL;
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  function normalize(str){
+    return String(str)
+      .replace(/đ/g,"d").replace(/Đ/g,"D")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+      .toLowerCase().trim();
+  }
+
+  function colLetter(n){
+    var s = "", num = n + 1;
+    while(num > 0){
+      var m = (num - 1) % 26;
+      s = String.fromCharCode(65 + m) + s;
+      num = Math.floor((num - 1) / 26);
+    }
+    return s;
+  }
+
+  var jsonpCounter = 0;
+
+  function fetchSheetData(name){
+    return new Promise(function(resolve, reject){
+      jsonpCounter++;
+      var callbackName = "__gvizCallback_" + jsonpCounter + "_" + Date.now();
+      var sheetQueryName = (name === PHU_LUC_TAB_NAME) ? "PHỤ LỤC" : name;
+      
+      var url = "https://docs.google.com/spreadsheets/d/" + SHEET_ID +
+                "/gviz/tq?tqx=out:json;headers:0;responseHandler:" + callbackName +
+                "&sheet=" + encodeURIComponent(sheetQueryName);
+
+      var script = document.createElement("script");
+      var timeoutId;
+
+      function cleanup(){
+        clearTimeout(timeoutId);
+        delete window[callbackName];
+        if(script.parentNode) script.parentNode.removeChild(script);
+      }
+
+      window[callbackName] = function(json){
+        cleanup();
+        if(!json){
+          reject(new Error("Không nhận được dữ liệu từ Google Trang tính."));
+          return;
+        }
+        if(json.status === "error"){
+          var msg = (json.errors && json.errors[0] && json.errors[0].detailed_message) || "Không thể tải trang tính này.";
+          reject(new Error(msg));
+          return;
+        }
+        try{
+          resolve(buildGrid(json.table));
+        }catch(e){
+          reject(new Error("Không xử lý được dữ liệu trả về."));
+        }
+      };
+
+      script.src = url;
+      script.onerror = function(){
+        cleanup();
+        reject(new Error("Không thể kết nối tới Google Trang tính."));
+      };
+
+      timeoutId = setTimeout(function(){
+        cleanup();
+        reject(new Error("Hết thời gian chờ phản hồi từ Google Trang tính."));
+      }, 15000);
+
+      document.head.appendChild(script);
+    });
+  }
+
+  function buildGrid(table){
+    if(!table || !table.cols) return { headers: [], rows: [] };
+    var nCols = table.cols.length;
+    var rows = (table.rows || []).map(function(r){
+      var cells = r.c || [];
+      var out = [];
+      for(var i = 0; i < nCols; i++){
+        var cell = cells[i];
+        if(!cell){ out.push(""); continue; }
+        var val = (cell.f !== undefined && cell.f !== null) ? cell.f : cell.v;
+        out.push(val === null || val === undefined ? "" : String(val));
+      }
+      return out;
+    });
+
+    var nonEmptyRows = rows.filter(function(r){
+      return r.some(function(v){ return v.trim() !== ""; });
+    });
+
+    var colHasData = new Array(nCols).fill(false);
+    nonEmptyRows.forEach(function(r){
+      r.forEach(function(v, i){
+        if(v.trim() !== "") colHasData[i] = true;
+      });
+    });
+    var keepIdx = [];
+    colHasData.forEach(function(v, i){ if(v) keepIdx.push(i); });
+
+    var trimmedRows = nonEmptyRows.map(function(r){
+      return keepIdx.map(function(i){ return r[i].trim(); });
+    });
+
+    var headerRowIndex = -1;
+    var searchLimit = Math.min(6, trimmedRows.length);
+    for(var idx = 0; idx < searchLimit; idx++){
+      var hasStt = trimmedRows[idx].some(function(v){
+        var n = normalize(v);
+        return n === "stt";
+      });
+      if(hasStt){ headerRowIndex = idx; break; }
+    }
+
+    var headers, finalRows;
+    if(headerRowIndex !== -1){
+      headers = trimmedRows[headerRowIndex].map(function(h, i){
+        return h !== "" ? h : colLetter(keepIdx[i]);
+      });
+      finalRows = trimmedRows.slice(headerRowIndex + 1);
+    } else {
+      headers = keepIdx.map(function(i){ return colLetter(i); });
+      finalRows = trimmedRows;
+    }
+
+    return { headers: headers, rows: finalRows };
+  }
+
+  function renderTabButton(name){
+    var li = document.createElement("li");
+    var btn = document.createElement("button");
+    btn.className = "tab-btn" + (name === currentTab ? " active" : "");
+    btn.type = "button";
+    btn.textContent = name;
+    btn.addEventListener("click", function(){ selectTab(name); });
+    li.appendChild(btn);
+    return li;
+  }
+
+  function renderSidebar(filterTerm){
+    var term = normalize(filterTerm || "");
+    var filteredDocs = DOC_TABS.filter(function(t){ return normalize(t).indexOf(term) !== -1; });
+    var filteredProv = PROVINCE_TABS.filter(function(t){ return normalize(t).indexOf(term) !== -1; });
+
+    els.docTabList.innerHTML = "";
+    if(filteredDocs.length === 0){
+      var e1 = document.createElement("li");
+      e1.className = "empty"; e1.textContent = "Không có kết quả";
+      els.docTabList.appendChild(e1);
+    } else {
+      filteredDocs.forEach(function(name){ els.docTabList.appendChild(renderTabButton(name)); });
+    }
+
+    els.provTabList.innerHTML = "";
+    if(filteredProv.length === 0){
+      var e2 = document.createElement("li");
+      e2.className = "empty"; e2.textContent = "Không có kết quả";
+      els.provTabList.appendChild(e2);
+    } else {
+      filteredProv.forEach(function(name){ els.provTabList.appendChild(renderTabButton(name)); });
+    }
+
+    els.provCount.textContent = filteredProv.length;
+  }
+
+  function updateActiveButtons(){
+    document.querySelectorAll(".tab-btn").forEach(function(btn){
+      btn.classList.toggle("active", btn.textContent === currentTab);
+    });
+  }
+
+  function renderLanding(){
+    els.content.innerHTML =
+      '<div class="state-panel landing">' +
+        '<h2>Chọn một mục để bắt đầu</h2>' +
+        '<p>Chọn tài liệu hoặc tỉnh / thành ở danh sách bên trái để xem toàn bộ dữ liệu tương ứng, được tải trực tiếp từ Google Trang tính.</p>' +
+        '<div class="landing-stats">' +
+          '<div><strong>' + DOC_TABS.length + '</strong><span>Tài liệu</span></div>' +
+          '<div><strong>' + PROVINCE_TABS.length + '</strong><span>Tỉnh / Thành</span></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function renderLoading(name){
+    els.content.innerHTML =
+      '<div class="state-panel">' +
+        '<div class="spinner"></div>' +
+        '<h2>Đang tải "' + escapeHtml(name) + '"…</h2>' +
+        '<p>Dữ liệu đang được lấy trực tiếp từ Google Trang tính.</p>' +
+      '</div>';
+  }
+
+  function renderError(name, err){
+    els.content.innerHTML =
+      '<div class="state-panel error">' +
+        '<h2>Không tải được "' + escapeHtml(name) + '"</h2>' +
+        '<p>' + escapeHtml(err && err.message ? err.message : "Đã xảy ra lỗi khi tải dữ liệu.") + '</p>' +
+        '<ul>' +
+          '<li>Kiểm tra trang tính đã bật chia sẻ <strong>"Bất kỳ ai có đường liên kết – Người xem"</strong>.</li>' +
+          '<li>Kiểm tra lại kết nối mạng rồi thử lại.</li>' +
+        '</ul>' +
+        '<div class="state-actions">' +
+          '<button type="button" id="retryBtn">Thử lại</button>' +
+          '<a href="' + SHEET_URL + '" target="_blank" rel="noopener">Mở trên Google Sheets ↗</a>' +
+        '</div>' +
+      '</div>';
+    document.getElementById("retryBtn").addEventListener("click", function(){
+      cache.delete(name);
+      selectTab(name);
+    });
+  }
+
+  function renderTable(name, data){
+    currentRows = data.rows;
+
+    if(data.rows.length === 0){
+      els.content.innerHTML =
+        '<div class="panel-header">' +
+          '<div><h2>' + escapeHtml(name) + '</h2><p class="meta">Không có dữ liệu</p></div>' +
+        '</div>' +
+        '<div class="state-panel"><p>Trang tính này hiện chưa có dữ liệu.</p></div>';
+      return;
+    }
+
+    if (name === "THUYẾT MINH") {
+      var docHtml = '<div class="doc-view-wrap">';
+      
+      data.rows.forEach(function(r, index) {
+        var text = r.filter(Boolean).join(" ").trim();
+        if (!text) return;
+
+        if (index === 0 && text.toUpperCase() === "THUYẾT MINH") {
+          docHtml += '<div class="doc-title">' + escapeHtml(text) + '</div><hr class="doc-divider">';
+        } else if (index === 1) {
+          docHtml += '<div class="doc-subtitle">' + escapeHtml(text) + '</div>';
+        } else {
+          var heading = "";
+          var body = text;
+          
+          if (/^\d+\./.test(text)) {
+            var colonIdx = text.indexOf(':');
+            if (colonIdx !== -1) {
+              heading = text.substring(0, colonIdx + 1);
+              body = text.substring(colonIdx + 1).trim();
+            } else {
+              heading = text;
+              body = "";
+            }
+          }
+
+          if (heading) {
+            docHtml += '<div class="doc-heading">' + escapeHtml(heading) + '</div>';
+          }
+          
+          if (body) {
+            var safeBody = escapeHtml(body);
+            
+            // 1. Dấu a) b)
+            safeBody = safeBody.replace(/(?:\s|^)([a-z]\))\s/gi, '</div><div class="doc-list doc-alpha"><span class="bullet">$1</span>');
+            
+            // 2. Thay thế "- Tiêu đề:" thành "➢ Tiêu đề:" (kèm thẻ <b> in đậm)
+            safeBody = safeBody.replace(/(?:\s|^)-\s*([^:.]{1,60})\s*:/g, '</div><div class="doc-list doc-arrow"><span class="bullet">➢</span><b>$1:</b> ');
+            
+            // 3. THAY THẾ các dấu '+' và '-' thành dấu chấm tròn (.)
+            safeBody = safeBody.replace(/(?:\s|^)[+-]\s/g, '</div><div class="doc-list doc-dot"><span class="bullet">●</span>');
+            
+            safeBody = '<div class="doc-paragraph">' + safeBody + '</div>';
+            safeBody = safeBody.replace(/<div class="doc-paragraph">\s*<\/div>/g, '');
+            
+            docHtml += '<div class="doc-content">' + safeBody + '</div>';
+          }
+        }
+      });
+      
+      docHtml += '</div>';
+
+      els.content.innerHTML =
+        '<div class="panel-header">' +
+          '<div>' +
+            '<h2>Văn bản Thuyết minh</h2>' +
+          '</div>' +
+          '<div class="panel-actions">' +
+            '<a class="ext-link" href="' + SHEET_URL + '" target="_blank" rel="noopener">Mở trên Google Sheets ↗</a>' +
+          '</div>' +
+        '</div>' +
+        docHtml;
+      return; 
+    }
+
+    var isPhuLuc = (name === PHU_LUC_TAB_NAME);
+    var isSimpleHeaderTab = (PROVINCE_TABS.indexOf(name) !== -1) || (name === SU_DOAN_TAB_NAME);
+
+    var effectiveHeaders = data.headers;
+    if(isSimpleHeaderTab){
+      effectiveHeaders = SIMPLE_HEADER;
+    } else if(isPhuLuc){
+      effectiveHeaders = null;
+    }
+
+    var sttFirst = !isPhuLuc && effectiveHeaders && effectiveHeaders.length > 0 && normalize(effectiveHeaders[0]) === "stt";
+
+    var theadHtml;
+    if(isPhuLuc){
+      theadHtml = PHU_LUC_HEADER_HTML;
+    } else {
+      var headHtml = effectiveHeaders.map(function(h, i){
+        var cls = (sttFirst && i === 0) ? ' class="col-stt"' : "";
+        return "<th" + cls + ">" + escapeHtml(h) + "</th>";
+      }).join("");
+      theadHtml = '<tr>' + headHtml + '</tr>';
+    }
+
+    var bodyHtml = data.rows.map(function(r){
+      if(isPhuLuc) {
+        if(r.length === 0) return "";
+        var html = '<tr>';
+        html += '<td colspan="2" style="font-weight: bold; text-align: center;">' + escapeHtml(r[0]) + '</td>';
+        for(var i = 1; i < r.length; i++){
+          html += '<td>' + escapeHtml(r[i]) + '</td>';
+        }
+        html += '</tr>';
+        return html;
+      } else {
+        return "<tr>" + r.map(function(c, i){
+          var cls = (!isPhuLuc && sttFirst && i === 0) ? ' class="col-stt"' : "";
+          return "<td" + cls + ">" + escapeHtml(c) + "</td>";
+        }).join("") + "</tr>";
+      }
+    }).join("");
+
+    var colCount = isPhuLuc ? (data.rows[0] ? data.rows[0].length : 17) : effectiveHeaders.length;
+    var tableClass = isPhuLuc ? 'summary-table' : 'standard-table';
+    var headerTitle = isPhuLuc ? "TỔNG HỢP DANH SÁCH QUÂN NHÂN HY SINH" : escapeHtml(name);
+
+    els.content.innerHTML =
+      '<div class="panel-header">' +
+        '<div>' +
+          '<h2>' + headerTitle + '</h2>' +
+          '<p class="meta">' + data.rows.length.toLocaleString("vi-VN") + ' dòng · ' + colCount + ' cột</p>' +
+        '</div>' +
+        '<div class="panel-actions">' +
+          '<div class="table-search">' +
+            '<svg viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z" fill="none" stroke="currentColor" stroke-width="2"/></svg>' +
+            '<input id="tableSearch" type="text" placeholder="Tìm trong bảng…" autocomplete="off">' +
+          '</div>' +
+          '<a class="ext-link" href="' + SHEET_URL + '" target="_blank" rel="noopener">Mở trên Google Sheets ↗</a>' +
+        '</div>' +
+      '</div>' +
+      '<div class="table-wrap">' +
+        '<table id="dataTable" class="' + tableClass + '">' +
+          '<thead>' + theadHtml + '</thead>' +
+          '<tbody>' + bodyHtml + '</tbody>' +
+        '</table>' +
+        '<p class="no-results" id="noResults" hidden>Không tìm thấy kết quả phù hợp.</p>' +
+      '</div>';
+
+    document.getElementById("tableSearch").addEventListener("input", function(e){
+      onTableSearch(e.target.value);
+    });
+  }
+
+  function onTableSearch(value){
+    var term = normalize(value);
+    var tbody = document.querySelector("#dataTable tbody");
+    if(!tbody) return;
+    var rows = tbody.querySelectorAll("tr");
+    var visible = 0;
+    rows.forEach(function(tr, i){
+      var rowText = normalize(currentRows[i].join(" "));
+      var match = term === "" || rowText.indexOf(term) !== -1;
+      tr.style.display = match ? "" : "none";
+      if(match) visible++;
+    });
+    var noResults = document.getElementById("noResults");
+    if(noResults) noResults.hidden = visible !== 0 || term === "";
+  }
+
+  function selectTab(name){
+    currentTab = name;
+    updateActiveButtons();
+    closeDrawer();
+
+    if(cache.has(name)){
+      els.content.innerHTML = ""; 
+      setTimeout(function() {
+        renderTable(name, cache.get(name));
+      }, 10);
+      return;
+    }
+
+    renderLoading(name);
+    fetchSheetData(name).then(function(data){
+      cache.set(name, data);
+      if(currentTab === name) renderTable(name, data);
+    }).catch(function(err){
+      if(currentTab === name) renderError(name, err);
+    });
+  }
+  window.selectTab = selectTab;
+
+  function openDrawer(){
+    els.sidebar.classList.add("open");
+    els.backdrop.classList.add("show");
+  }
+  function closeDrawer(){
+    els.sidebar.classList.remove("open");
+    els.backdrop.classList.remove("show");
+  }
+  els.menuBtn.addEventListener("click", openDrawer);
+  els.backdrop.addEventListener("click", closeDrawer);
+
+  els.sidebarSearch.addEventListener("input", function(e){ renderSidebar(e.target.value); });
+  renderSidebar("");
+  renderLanding();
+
+})();
+</script>
+</body>
+</html>
