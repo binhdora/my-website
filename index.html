@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Danh Sách Liệt Sĩ Các Tỉnh — Tra cứu trực tuyến</title>
 <meta name="description" content="Tra cứu trực tiếp toàn bộ dữ liệu từ Google Trang tính, không cần đăng nhập, không cần cài ứng dụng.">
+<link rel="preconnect" href="https://docs.google.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -43,7 +44,6 @@
   a{color:inherit;}
   button{font-family:inherit;}
 
-  /* ---------- Hiệu ứng Animations ---------- */
   @keyframes fadeInUp {
     0% { opacity: 0; transform: translateY(12px); }
     100% { opacity: 1; transform: translateY(0); }
@@ -171,6 +171,7 @@
     flex:1;
     overflow-y:auto;
     padding:8px 12px 16px;
+    will-change: transform;
   }
   .sidebar-group-label{
     font-size:11px;
@@ -237,12 +238,12 @@
     flex:1;
     min-width:0;
     min-height:0;
-    overflow-y:auto;
     padding:28px 32px;
     position: relative; 
+    display: flex;
+    flex-direction: column;
   }
 
-  /* LOGO NỀN CHÌM CHO PNG */
   main#content::before {
     content: "";
     position: fixed;
@@ -342,6 +343,7 @@
     border-bottom:2px solid var(--gold-500);
     position: relative;
     z-index: 1;
+    flex-shrink: 0; 
   }
   .panel-header h2{
     font-family:'Noto Serif',serif;
@@ -386,14 +388,21 @@
   .ext-link:hover{border-color:var(--oxblood-700); background-color: rgba(122, 31, 29, 0.04);}
   .ext-link:active{transform: scale(0.96);}
 
+  mark.highlight {
+    background-color: rgba(220, 192, 121, 0.7);
+    color: inherit;
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+
   .table-wrap{
-    border:1px solid var(--line);
+    border:1px solid rgba(74, 64, 48, 0.35);
     border-radius:var(--radius);
-    overflow:auto;
-    max-height:calc(100vh - 230px);
+    overflow:auto; 
+    flex: 1; 
+    min-height: 0;
     position: relative;
     z-index: 1;
-    /* Kích hoạt Scroll mượt trên iOS */
     -webkit-overflow-scrolling: touch; 
   }
   
@@ -401,25 +410,30 @@
     border-collapse:collapse;
     width:100%;
     font-size:13.5px;
-    border: 1px solid var(--stone-200);
   }
   table#dataTable th, table#dataTable td {
-    border: 1px solid var(--line); 
+    border: 1px solid rgba(74, 64, 48, 0.35);
   }
+
+  #tableBody {
+    contain: content; 
+  }
+
+  /* TỐI ƯU CỰC MẠNH GPU: CHỐNG RUNG LẮC TIÊU ĐỀ KHI CUỘN */
   table#dataTable thead th{
     position:sticky;
     top:0;
-    background:rgba(219, 207, 174, 0.96); 
-    backdrop-filter: blur(4px);
+    background-color: var(--stone-200); /* Dùng màu đặc tuyệt đối thay vì lớp trong suốt */
+    transform: translateZ(0); /* Bật Hardware Acceleration ép GPU khóa khung hình */
     text-align:center;
     padding:10px 14px;
     border-bottom:1.5px solid var(--ink-900);
     font-weight:700;
     color:var(--ink-900);
-    z-index:2;
+    z-index:10;
   }
   table#dataTable thead th.hdr-wrap{
-    white-space:normal;
+    white-space:normal; 
     vertical-align:middle;
     line-height:1.35;
   }
@@ -431,6 +445,7 @@
     padding:8px 12px;
     vertical-align: middle; 
     color:var(--ink-900);
+    white-space: nowrap; 
   }
   
   table#dataTable tbody tr {
@@ -439,22 +454,43 @@
   table#dataTable tbody tr:nth-child(even){background:rgba(36,31,23,.03);} 
   table#dataTable tbody tr:hover{background:rgba(180,144,63,.12);}
   
-  table.standard-table { table-layout: auto; }
-  table.standard-table th:nth-child(1), table.standard-table td:nth-child(1) { width: 40px; min-width: 40px; text-align: center; }
-  table.standard-table th:nth-child(2), table.standard-table td:nth-child(2) { white-space: nowrap; min-width: 130px; font-weight: 500; text-align: left; }
-  table.standard-table th:nth-child(3), table.standard-table td:nth-child(3) { white-space: normal; width: 75px; min-width: 75px; line-height: 1.3; text-align: center; }
-  table.standard-table th:nth-child(4), table.standard-table td:nth-child(4) { min-width: 220px; text-align: left; }
-  table.standard-table th:nth-child(5), table.standard-table td:nth-child(5) { width: 80px; min-width: 80px; text-align: center; }
-  table.standard-table th:nth-child(6), table.standard-table td:nth-child(6) { width: 70px; min-width: 70px; text-align: center; }
-  table.standard-table th:nth-child(7), table.standard-table td:nth-child(7) { width: 60px; min-width: 60px; text-align: center; }
-  table.standard-table th:nth-child(8), table.standard-table td:nth-child(8) { width: 70px; min-width: 70px; text-align: center; }
-  table.standard-table th:nth-child(9), table.standard-table td:nth-child(9) { white-space: normal; width: 85px; min-width: 85px; line-height: 1.3; text-align: center; }
-  table.standard-table th:nth-child(10), table.standard-table td:nth-child(10) { min-width: 220px; text-align: left; }
+  /* CÂN CHỈNH KÍCH THƯỚC BẢNG TIÊU CHUẨN */
+  table.standard-table th:nth-child(1), table.standard-table td:nth-child(1),
+  table.standard-table th:nth-child(3), table.standard-table td:nth-child(3),
+  table.standard-table th:nth-child(5), table.standard-table td:nth-child(5),
+  table.standard-table th:nth-child(6), table.standard-table td:nth-child(6),
+  table.standard-table th:nth-child(7), table.standard-table td:nth-child(7),
+  table.standard-table th:nth-child(8), table.standard-table td:nth-child(8) { 
+    width: 1%; 
+    text-align: center; 
+  }
   
-  table.summary-table { border: 1.5px solid #111; }
-  table.summary-table th, table.summary-table td { border: 1px solid #111; }
-  table.summary-table thead th { text-align: center; vertical-align: middle; padding: 12px 8px; background-color: rgba(219, 207, 174, 0.96); font-weight: 700; color: #111; }
-  table.summary-table tbody td { text-align: center; vertical-align: middle; padding: 10px 8px; color: #111; }
+  /* Cột Họ Tên */
+  table.standard-table th:nth-child(2), table.standard-table td:nth-child(2) { 
+    font-weight: 500; text-align: left; min-width: 160px;
+  }
+
+  /* CỘT SỐ 9 (NGÀY THÁNG NĂM HY SINH): BÓP NHỎ VÀ CHO RỚT DÒNG */
+  table.standard-table th:nth-child(9), table.standard-table td:nth-child(9) {
+    min-width: 120px; 
+    max-width: 150px; 
+    text-align: center;
+    white-space: normal; /* Cho phép nội dung dài tự động xuống dòng */
+    line-height: 1.4;
+  }
+
+  /* Các cột nội dung dài (Quê quán, Nơi hy sinh, Mai táng, Tên Cha mẹ) */
+  table.standard-table th:nth-child(4), table.standard-table td:nth-child(4),
+  table.standard-table th:nth-child(10), table.standard-table td:nth-child(10),
+  table.standard-table th:nth-child(11), table.standard-table td:nth-child(11),
+  table.standard-table th:nth-child(12), table.standard-table td:nth-child(12) { 
+    text-align: left; min-width: 250px;
+  }
+  
+  table.summary-table { border: 1.5px solid #241F17; } 
+  table.summary-table th, table.summary-table td { border: 1px solid rgba(74, 64, 48, 0.4); }
+  table.summary-table thead th { text-align: center; vertical-align: middle; padding: 12px 8px; background-color: var(--stone-200); font-weight: 700; color: #111; transform: translateZ(0); }
+  table.summary-table tbody td { text-align: center; vertical-align: middle; padding: 10px 8px; color: #111; white-space: nowrap; }
 
   /* ========================================================
      UI CHUYÊN BIỆT CHO TRANG THUYẾT MINH
@@ -463,13 +499,15 @@
     padding: 36px 40px; 
     border-radius: var(--radius);
     border: none !important; 
-    max-height: calc(100vh - 180px);
+    flex: 1; 
+    min-height: 0;
     overflow-y: auto;
     font-size: 15.5px;
     line-height: 1.7; 
     color: var(--ink-900);
     position: relative;
     z-index: 1;
+    will-change: transform;
   }
   .doc-view-wrap .doc-title {
     font-family: 'Noto Serif', serif;
@@ -525,15 +563,18 @@
   }
   
   .doc-alpha { margin-top: 10px; font-weight: 600; color: var(--oxblood-800); }
-  .doc-arrow { margin-top: 8px; color: var(--oxblood-800); }
-  .doc-arrow .bullet { font-size: 16px; font-weight: normal; } 
   
+  .doc-arrow { margin-top: 8px; color: var(--ink-900); }
+  .doc-arrow b { color: var(--oxblood-800); }
+  .doc-arrow .bullet { font-size: 16px; font-weight: normal; color: var(--oxblood-800); } 
+  
+  /* CẬP NHẬT: Dấu chấm đặc (●), màu nhạt hơn tiêu đề, và kích thước nhỏ lại */
   .doc-dot { color: var(--ink-900); }
   .doc-dot .bullet {
-    font-size: 10px; 
+    font-size: 11px; 
     font-weight: bold;
     transform: translateY(-2px); 
-    color: var(--oxblood-800);
+    color: #9c3331; 
   }
 
   .no-results{
@@ -670,17 +711,23 @@
   
   // Variables for Global State
   var currentRows = [];
+  var currentSearchKeys = []; 
   var currentIsPhuLuc = false;
   var currentSttFirst = false;
+  var globalSearchTerm = ""; 
 
   // ==== VIRTUAL SCROLLING VARIABLES ====
   var virtualScrollData = [];
   var vScrollContainer = null;
   var vScrollTbody = null;
-  var ROW_HEIGHT_ESTIMATE = 42; // px - Ước lượng chiều cao trung bình mỗi dòng
-  var BUFFER_ROWS = 15; // Số dòng render dự phòng trên & dưới màn hình
+  var ROW_HEIGHT_ESTIMATE = 42; 
+  var BUFFER_ROWS = 20; 
   var lastRenderedStart = -1; 
-  var isScrollListenerAttached = false;
+  var searchTimeout = null; 
+
+  var REGEX_D_LOWER = /đ/g;
+  var REGEX_D_UPPER = /Đ/g;
+  var REGEX_MARKS = /[\u0300-\u036f]/g;
 
   var els = {
     content: document.getElementById("content"),
@@ -704,8 +751,8 @@
 
   function normalize(str){
     return String(str)
-      .replace(/đ/g,"d").replace(/Đ/g,"D")
-      .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+      .replace(REGEX_D_LOWER,"d").replace(REGEX_D_UPPER,"D")
+      .normalize("NFD").replace(REGEX_MARKS,"")
       .toLowerCase().trim();
   }
 
@@ -766,7 +813,7 @@
 
       timeoutId = setTimeout(function(){
         cleanup();
-        reject(new Error("Hết thời gian chờ phản hồi từ Google Trang tính (Dữ liệu quá lớn)."));
+        reject(new Error("Hết thời gian chờ phản hồi từ Google Trang tính."));
       }, 45000); 
 
       document.head.appendChild(script);
@@ -840,15 +887,18 @@
     }
 
     var finalRows = new Array(tempRows.length - startIdx);
+    var searchKeys = new Array(tempRows.length - startIdx); 
+
     for(var r = startIdx; r < tempRows.length; r++){
       var newRow = new Array(keepIdx.length);
       for(var c = 0; c < keepIdx.length; c++){
         newRow[c] = tempRows[r][keepIdx[c]];
       }
       finalRows[r - startIdx] = newRow;
+      searchKeys[r - startIdx] = normalize(newRow.join(" ")); 
     }
 
-    return { headers: headers, rows: finalRows };
+    return { headers: headers, rows: finalRows, searchKeys: searchKeys };
   }
 
   function renderTabButton(name){
@@ -935,24 +985,44 @@
     });
   }
 
+  // ==========================================
+  // XỬ LÝ HIGHLIGHT & VIRTUAL SCROLLING
+  // ==========================================
+  
+  function highlightText(text, term) {
+    if (!term || text === "") return escapeHtml(text);
+    var str = String(text);
+    var normStr = normalize(str);
+    var idx = normStr.indexOf(term);
 
-  // ==========================================
-  // LÕI VIRTUAL SCROLLING (CHỐNG LAG TUYỆT ĐỐI)
-  // ==========================================
+    if (idx === -1) return escapeHtml(text);
+
+    var result = "";
+    var lastIdx = 0;
+    while (idx !== -1) {
+      result += escapeHtml(str.substring(lastIdx, idx));
+      result += '<mark class="highlight">' + escapeHtml(str.substring(idx, idx + term.length)) + '</mark>';
+      lastIdx = idx + term.length;
+      idx = normStr.indexOf(term, lastIdx);
+    }
+    result += escapeHtml(str.substring(lastIdx));
+    return result;
+  }
+
   function buildRowsHTML(rowsData, isPhuLuc, sttFirst) {
     return rowsData.map(function(r){
       if(isPhuLuc) {
         if(r.length === 0) return "";
-        var html = '<tr><td colspan="2" style="font-weight: bold; text-align: center;">' + escapeHtml(r[0]) + '</td>';
+        var html = '<tr><td colspan="2" style="font-weight: bold; text-align: center;">' + highlightText(r[0], globalSearchTerm) + '</td>';
         for(var i = 1; i < r.length; i++){
-          html += '<td>' + escapeHtml(r[i]) + '</td>';
+          html += '<td>' + highlightText(r[i], globalSearchTerm) + '</td>';
         }
         html += '</tr>';
         return html;
       } else {
         return "<tr>" + r.map(function(c, i){
           var cls = (!isPhuLuc && sttFirst && i === 0) ? ' class="col-stt"' : "";
-          return "<td" + cls + ">" + escapeHtml(c) + "</td>";
+          return "<td" + cls + ">" + highlightText(c, globalSearchTerm) + "</td>";
         }).join("") + "</tr>";
       }
     }).join("");
@@ -965,34 +1035,27 @@
     var viewportHeight = vScrollContainer.clientHeight;
     var totalRows = virtualScrollData.length;
     
-    // Tính toán Index của dòng cần vẽ
     var startIndex = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT_ESTIMATE) - BUFFER_ROWS);
     var endIndex = Math.min(totalRows, Math.floor((scrollTop + viewportHeight) / ROW_HEIGHT_ESTIMATE) + BUFFER_ROWS);
     
-    // Nếu vẫn ở trong khối dữ liệu đã vẽ thì bỏ qua để tiết kiệm tài nguyên
     if (startIndex === lastRenderedStart) return;
     lastRenderedStart = startIndex;
 
-    // Tính toán chiều cao không gian giả (Khoảng trống)
     var topSpacerHeight = startIndex * ROW_HEIGHT_ESTIMATE;
     var bottomSpacerHeight = Math.max(0, (totalRows - endIndex) * ROW_HEIGHT_ESTIMATE);
 
     var html = '';
-    // Thẻ TR tạo khoảng trống phía trên
     if (topSpacerHeight > 0) {
       html += '<tr style="height:' + topSpacerHeight + 'px; border:none; pointer-events:none;"><td colspan="100" style="padding:0; border:none;"></td></tr>';
     }
     
-    // Gắn dữ liệu thật vào giữa
     var chunk = virtualScrollData.slice(startIndex, endIndex);
     html += buildRowsHTML(chunk, currentIsPhuLuc, currentSttFirst);
     
-    // Thẻ TR tạo khoảng trống phía dưới
     if (bottomSpacerHeight > 0) {
       html += '<tr style="height:' + bottomSpacerHeight + 'px; border:none; pointer-events:none;"><td colspan="100" style="padding:0; border:none;"></td></tr>';
     }
     
-    // In ra màn hình ngay lập tức (Chỉ khoảng 30-50 thẻ TR)
     vScrollTbody.innerHTML = html;
   }
 
@@ -1002,32 +1065,34 @@
 
   function onTableSearch(value){
     var term = normalize(value);
+    globalSearchTerm = term; 
     
-    // Lọc cực nhanh trong RAM
     if (term === "") {
         virtualScrollData = currentRows;
     } else {
-        virtualScrollData = currentRows.filter(function(r) {
-            var rowText = normalize(r.join(" "));
-            return rowText.indexOf(term) !== -1;
-        });
+        virtualScrollData = [];
+        for (var i = 0; i < currentRows.length; i++) {
+            if (currentSearchKeys[i].indexOf(term) !== -1) {
+                virtualScrollData.push(currentRows[i]);
+            }
+        }
     }
 
     var noResults = document.getElementById("noResults");
     if(noResults) noResults.hidden = virtualScrollData.length > 0;
 
-    // Reset lại vị trí cuộn & bắt buộc Render lại
     if (vScrollContainer) {
       vScrollContainer.scrollTop = 0; 
     }
     lastRenderedStart = -1; 
     performVirtualScrollRender();
   }
-  // ==========================================
 
 
   function renderTable(name, data){
     currentRows = data.rows;
+    currentSearchKeys = data.searchKeys || []; 
+    globalSearchTerm = ""; 
 
     if(data.rows.length === 0){
       els.content.innerHTML =
@@ -1056,11 +1121,17 @@
           if (/^\d+\./.test(text)) {
             var colonIdx = text.indexOf(':');
             if (colonIdx !== -1) {
-              heading = text.substring(0, colonIdx + 1);
+              heading = text.substring(0, colonIdx).trim(); 
               body = text.substring(colonIdx + 1).trim();
             } else {
-              heading = text;
+              heading = text.trim();
               body = "";
+            }
+
+            var alphaMatch = heading.match(/^(.*?)\s+(a\)\s+.*)$/);
+            if (alphaMatch) {
+              heading = alphaMatch[1].trim();
+              body = (alphaMatch[2] + " " + body).trim();
             }
           }
 
@@ -1072,8 +1143,9 @@
             var safeBody = escapeHtml(body);
             
             safeBody = safeBody.replace(/(?:\s|^)([a-z]\))\s/gi, '</div><div class="doc-list doc-alpha"><span class="bullet">$1</span>');
-            safeBody = safeBody.replace(/(?:\s|^)-\s*([^:.]{1,60})\s*:/g, '</div><div class="doc-list doc-arrow"><span class="bullet">➢</span><b>$1:</b> ');
-            safeBody = safeBody.replace(/(?:\s|^)[+-]\s/g, '</div><div class="doc-list doc-dot"><span class="bullet">●</span>');
+            safeBody = safeBody.replace(/(?:\s|^)(?:-|➢)\s*([^:.]{1,60})\s*:/g, '</div><div class="doc-list doc-arrow"><span class="bullet">➢</span><b>$1:</b> ');
+            /* CẬP NHẬT: Dấu chấm đặc (●) */
+            safeBody = safeBody.replace(/(?:\s|^)[+\-•·]\s/g, '</div><div class="doc-list doc-dot"><span class="bullet">●</span>');
             
             safeBody = '<div class="doc-paragraph">' + safeBody + '</div>';
             safeBody = safeBody.replace(/<div class="doc-paragraph">\s*<\/div>/g, '');
@@ -1150,27 +1222,20 @@
         '<p class="no-results" id="noResults" hidden>Không tìm thấy kết quả phù hợp.</p>' +
       '</div>';
 
-    // Bật tìm kiếm
     document.getElementById("tableSearch").addEventListener("input", function(e){
-      onTableSearch(e.target.value);
+      if (searchTimeout) clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(function() {
+          onTableSearch(e.target.value);
+      }, 250);
     });
 
-    // Kích hoạt Virtual Scroll
     virtualScrollData = currentRows;
     vScrollContainer = document.getElementById("vScrollWrapper");
     vScrollTbody = document.getElementById("tableBody");
     lastRenderedStart = -1;
 
-    // Gắn sự kiện cuộn (Scroll)
-    if (!isScrollListenerAttached) {
-      // Dùng Event Delegation / Re-attach 
-      vScrollContainer.addEventListener("scroll", handleScrollEvent);
-    } else {
-      vScrollContainer.removeEventListener("scroll", handleScrollEvent);
-      vScrollContainer.addEventListener("scroll", handleScrollEvent);
-    }
+    vScrollContainer.addEventListener("scroll", handleScrollEvent, { passive: true });
     
-    // Gọi Render lần đầu tiên
     performVirtualScrollRender();
   }
 
