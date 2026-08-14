@@ -423,8 +423,8 @@
   table#dataTable thead th{
     position:sticky;
     top:0;
-    background-color: var(--stone-200); /* Dùng màu đặc tuyệt đối thay vì lớp trong suốt */
-    transform: translateZ(0); /* Bật Hardware Acceleration ép GPU khóa khung hình */
+    background-color: var(--stone-200); 
+    transform: translateZ(0); 
     text-align:center;
     padding:10px 14px;
     border-bottom:1.5px solid var(--ink-900);
@@ -442,7 +442,7 @@
   }
   
   table#dataTable tbody td{
-    padding:8px 12px;
+    padding: 12px; /* Đã tăng bề dày hàng (từ 8px lên 12px) để dữ liệu cân đối hơn */
     vertical-align: middle; 
     color:var(--ink-900);
     white-space: nowrap; 
@@ -490,7 +490,7 @@
   table.summary-table { border: 1.5px solid #241F17; } 
   table.summary-table th, table.summary-table td { border: 1px solid rgba(74, 64, 48, 0.4); }
   table.summary-table thead th { text-align: center; vertical-align: middle; padding: 12px 8px; background-color: var(--stone-200); font-weight: 700; color: #111; transform: translateZ(0); }
-  table.summary-table tbody td { text-align: center; vertical-align: middle; padding: 10px 8px; color: #111; white-space: nowrap; }
+  table.summary-table tbody td { text-align: center; vertical-align: middle; padding: 14px 8px; /* Đã tăng bề dày hàng (từ 10px lên 14px) ở bảng Số liệu tổng quan */ color: #111; white-space: nowrap; }
 
   /* ========================================================
      UI CHUYÊN BIỆT CHO TRANG THUYẾT MINH
@@ -604,6 +604,18 @@
     .table-search input{width:100%;}
     .panel-actions{width:100%; justify-content:space-between;}
     .doc-view-wrap { padding: 24px 20px; }
+  }
+
+  /* ---------- Fix cho điện thoại xoay ngang (Landscape) ---------- */
+  @media screen and (max-width: 991px) and (orientation: landscape) {
+    table#dataTable {
+      width: max-content; /* Trải dài bảng thay vì bóp méo che lấp chữ */
+      min-width: 100%;
+    }
+    table#dataTable thead th {
+      position: static !important; /* Hủy cố định tiêu đề/cột để không che khuất nội dung */
+      transform: none !important;
+    }
   }
 </style>
 </head>
